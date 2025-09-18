@@ -1,0 +1,208 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
+ */
+package studentgradesystem;
+
+/**
+ *
+ * @author Ultron
+ */
+import java.util.Scanner;
+public class StudentGradeSystem {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+        Scanner sc = new Scanner(System.in);
+         int MAX = 50;
+        int[] rollNo = new int[MAX];
+        String[] name = new String[MAX];
+        int[][] marks = new int[MAX][3];
+        int[] total = new int[MAX];
+        float[] avg = new float[MAX];
+        int count = 0;
+
+        int choice;
+        do {
+            System.out.println("\n===== Student Grade Management System =====");
+            System.out.println("1. Add Student");
+            System.out.println("2. Update Marks");
+            System.out.println("3. Remove Student");
+            System.out.println("4. View All Students");
+            System.out.println("5. Search Student");
+            System.out.println("6. Highest Scorer");
+            System.out.println("7. Class Average");
+            System.out.println("8. Exit");
+            System.out.print("Choose an option: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    if (count >= MAX) {
+                        System.out.println("Maximum students reached!");
+                        break;
+                    }
+                    System.out.print("Enter Roll No: ");
+                    int r = sc.nextInt();
+                    boolean exists = false;
+                    for (int i = 0; i < count; i++) {
+                        if (rollNo[i] == r) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (exists) {
+                        System.out.println("Roll number already exists!");
+                        break;
+                    }
+                    rollNo[count] = r;
+                    sc.nextLine();
+                    System.out.print("Enter Name: ");
+                    name[count] = sc.nextLine();
+                    total[count] = 0;
+                    for (int j = 0; j < 3; j++) {
+                        System.out.print("Enter Marks in Subject " + (j + 1) + ": ");
+                        int m = sc.nextInt();
+                        if (m < 0 || m > 100) {
+                            System.out.println("Invalid marks (0-100). Entry cancelled.");
+                            total[count] = -1;
+                            break;
+                        }
+                        marks[count][j] = m;
+                        total[count] += m;
+                    }
+                    if (total[count] != -1) {
+                        avg[count] = total[count] / 3.0f;
+                        count++;
+                        System.out.println("Student added successfully!");
+                    }
+                    break;
+
+                case 2:
+                    System.out.print("Enter Roll No: ");
+                    r = sc.nextInt();
+                    int idx = -1;
+                    for (int i = 0; i < count; i++) {
+                        if (rollNo[i] == r) idx = i;
+                    }
+                    if (idx == -1) {
+                        System.out.println("Student not found!");
+                        break;
+                    }
+                    total[idx] = 0;
+                    for (int j = 0; j < 3; j++) {
+                        System.out.print("Enter new marks in Subject " + (j + 1) + ": ");
+                        int m = sc.nextInt();
+                        if (m < 0 || m > 100) {
+                            System.out.println("Invalid marks! Update cancelled.");
+                            total[idx] = -1;
+                            break;
+                        }
+                        marks[idx][j] = m;
+                        total[idx] += m;
+                    }
+                    if (total[idx] != -1) {
+                        avg[idx] = total[idx] / 3.0f;
+                        System.out.println("Marks updated successfully!");
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Enter Roll No: ");
+                    r = sc.nextInt();
+                    idx = -1;
+                    for (int i = 0; i < count; i++) {
+                        if (rollNo[i] == r) idx = i;
+                    }
+                    if (idx == -1) {
+                        System.out.println("Student not found!");
+                        break;
+                    }
+                    for (int i = idx; i < count - 1; i++) {
+                        rollNo[i] = rollNo[i + 1];
+                        name[i] = name[i + 1];
+                        marks[i] = marks[i + 1];
+                        total[i] = total[i + 1];
+                        avg[i] = avg[i + 1];
+                    }
+                    count--;
+                    System.out.println("Student removed successfully!");
+                    break;
+
+                case 4:
+                    if (count == 0) {
+                        System.out.println("No students found!");
+                        break;
+                    }
+                    System.out.printf("%-10s %-15s %-10s %-10s %-10s %-10s %-10s%n",
+                            "RollNo", "Name", "Sub1", "Sub2", "Sub3", "Total", "Average");
+                    for (int i = 0; i < count; i++) {
+                        System.out.printf("%-10d %-15s %-10d %-10d %-10d %-10d %-10.2f%n",
+                                rollNo[i], name[i], marks[i][0], marks[i][1], marks[i][2],
+                                total[i], avg[i]);
+                    }
+                    break;
+
+                case 5:
+                    System.out.print("Enter Roll No: ");
+                    r = sc.nextInt();
+                    idx = -1;
+                    for (int i = 0; i < count; i++) {
+                        if (rollNo[i] == r) idx = i;
+                    }
+                    if (idx == -1) {
+                        System.out.println("Student not found!");
+                        break;
+                    }
+                    System.out.printf("RollNo: %d, Name: %s, Marks: [%d, %d, %d], Total: %d, Avg: %.2f%n",
+                            rollNo[idx], name[idx], marks[idx][0], marks[idx][1], marks[idx][2],
+                            total[idx], avg[idx]);
+                    break;
+
+                case 6:
+                    if (count == 0) {
+                        System.out.println("No students found!");
+                        break;
+                    }
+                    int topIndex = 0;
+                    for (int i = 1; i < count; i++) {
+                        if (total[i] > total[topIndex]) topIndex = i;
+                    }
+                    System.out.println("Highest Scorer: " + name[topIndex] +
+                            " (RollNo: " + rollNo[topIndex] + ", Total: " + total[topIndex] +
+                            ", Avg: " + avg[topIndex] + ")");
+                    break;
+
+                case 7:
+                    if (count == 0) {
+                        System.out.println("No students found!");
+                        break;
+                    }
+                    int sum = 0;
+                    for (int i = 0; i < count; i++) sum += total[i];
+                    float classAvg = sum / (count * 3.0f);
+                    System.out.println("Class Average Marks: " + classAvg);
+                    break;
+
+                case 8:
+                    System.out.println("Exiting program...");
+                    System.out.println("Total Students: " + count);
+                    if (count > 0) {
+                        int sumAll = 0;
+                        for (int i = 0; i < count; i++) sumAll += total[i];
+                        System.out.println("Class Average: " + (sumAll / (count * 3.0f)));
+                    }
+                    break;
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+        } while (choice != 8);
+
+        sc.close();
+    }
+    
+}
